@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Licznik odwiedzin</title>
+    <style>
+        /* Prosty layout: tło jako obraz (zamień background.jpg), mały licznik w lewym górnym rogu */
+        :root{
+            --counter-bg: rgba(0,0,0,0.6);
+            --counter-color: #fff;
+            --counter-radius: 8px;
+            --counter-padding: 6px 10px;
+            --counter-font: 13px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+        html,body{
+            height:100%;
+            margin:0;
+        }
+        body{
+            /* Zamień 'background.jpg' na swój obraz w tym samym katalogu lub ścieżkę do zewnętrznego obrazka */
+            background: #222 url(https://picazor.com/uploads/au25/su24/vladislava-shelygina/onlyfans/a6ei9/vladislava-shelygina-onlyfans-7tp7y-5.png) center/cover no-repeat;
+            font-family: var(--counter-font);
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+        }
+
+        /* Licznik: mały, dyskretny, zawsze w lewym górnym rogu */
+        .visit-counter{
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            background: var(--counter-bg);
+            color: var(--counter-color);
+            padding: var(--counter-padding);
+            border-radius: var(--counter-radius);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            user-select: none;
+        }
+
+        .visit-counter .number{
+            font-weight: 700;
+            font-feature-settings: "tnum";
+            font-variant-numeric: tabular-nums;
+            min-width: 38px;
+            text-align: right;
+        }
+
+        /* Mały styl dla etykiety - pozwala łatwo zastąpić resztę strony obrazem */
+        .visit-counter .label{
+            opacity: .9;
+            font-size: 12px;
+        }
+
+        /* Dla responsywności: zmniejsz licznik na bardzo małych ekranach */
+        @media (max-width:360px){
+            .visit-counter{ padding:6px 8px; gap:6px; font-size:12px; }
+            .visit-counter .number{ min-width:30px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="visit-counter" role="status" aria-live="polite" title="Liczba odwiedzin (lokalnie, w tej przeglądarce)">
+        <span class="label">Odwiedzin:</span>
+        <span id="counter-number" class="number">0</span>
+    </div>
+
+    <script>
+        // Prosty licznik oparty o localStorage (działa na statycznym hostingu, np. GitHub Pages).
+        // Uwaga: zlicza odwiedziny per przeglądarka/urządzenie (nie globalne).
+        (function(){
+            try {
+                const key = 'site_visit_count';
+                let n = parseInt(localStorage.getItem(key) || '0', 10);
+                if (!Number.isFinite(n)) n = 0;
+                n += 1;
+                localStorage.setItem(key, String(n));
+                document.getElementById('counter-number').textContent = n.toLocaleString();
+            } catch (e) {
+                // w przeglądarkach z zablokowanym localStorage po prostu nie pokazujemy licznika
+                console.warn('Licznik: localStorage niedostępne', e);
+                document.getElementById('counter-number').textContent = '—';
+            }
+        })();
+    </script>
+</body>
+</html>
